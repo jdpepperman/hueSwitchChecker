@@ -2,6 +2,7 @@
 
 from phue import Bridge
 import time
+import os
 
 b = Bridge('192.168.1.124')
 
@@ -40,3 +41,5 @@ while True:
     else:
         time.sleep(1)
     previousState = currentState
+
+os.system("echo 'The process on the server that monitors the light in the bedroom that is powered by the lightswitch has ended.' | mail -s 'SERVER: checkSwitch.py Ended' joshuapepperman@gmail.com")
