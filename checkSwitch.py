@@ -1,4 +1,4 @@
-#joshua pepperman
+#Joshua Pepperman
 
 from phue import Bridge
 import time
