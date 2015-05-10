@@ -10,7 +10,7 @@ b.connect()
 
 b.get_api()
 
-def setLightsToNormalScene(self):
+def setLightsToNormalScene():
     b.set_light("Bedside", 'bri', 254)
     b.set_light("Desk", 'bri', 254)
     b.set_light("Corner", 'bri', 254)
@@ -21,7 +21,7 @@ def setLightsToNormalScene(self):
     b.set_light("Desk", 'hue', 34440)
     b.set_light("Corner", 'hue', 34440)
 
-def setLightsToOff(self):
+def setLightsToOff():
     b.set_light("Bedside", 'on', False)
     b.set_light("Desk", 'on', False)
     b.set_light("Corner", 'on', False)
