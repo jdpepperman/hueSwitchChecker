@@ -1,8 +1,12 @@
 #Joshua Pepperman
 
+import requests
+
 from phue import Bridge
 import time
 import os
+
+r = requests.get("http://192.168.1.124/api/joshuaserver/lights")
 
 b = Bridge('192.168.1.124')
 
@@ -39,7 +43,8 @@ while True:
         #set them to the Normal scene
         setLightsToNormalScene()
     else:
-        time.sleep(1)
+        #time.sleep(1)
+        pass
     previousState = currentState
 
 os.system("echo 'The process on the server that monitors the light in the bedroom that is powered by the lightswitch has ended.' | mail -s 'SERVER: checkSwitch.py Ended' joshuapepperman@gmail.com")
