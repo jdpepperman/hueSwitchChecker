@@ -7,34 +7,42 @@ def setLightsToNormalScene():
     print("Turning lights on.")
     requests.put("http://192.168.1.124/api/joshuaserver/lights/1/state", data=json.dumps({"on":True, "sat":155, "bri":254, "hue":14704}))
     requests.put("http://192.168.1.124/api/joshuaserver/lights/2/state", data=json.dumps({"on":True, "sat":220, "bri":254, "hue":34439}))
-    requests.put("http://192.168.1.124/api/joshuaserver/lights/3/state", data=json.dumps({"on":True, "sat":220, "bri":254, "hue":34439}))
+    requests.put("http://192.168.1.124/api/joshuaserver/lights/3/state", data=json.dumps({"sat":220, "bri":254, "hue":34439}))
+    lightsAreOn = True
 
 def setLightsToOff():
     print("Turning lights off.")
     requests.put("http://192.168.1.124/api/joshuaserver/lights/1/state", data=json.dumps({"on":False}))
     requests.put("http://192.168.1.124/api/joshuaserver/lights/2/state", data=json.dumps({"on":False}))
     requests.put("http://192.168.1.124/api/joshuaserver/lights/3/state", data=json.dumps({"on":False}))
+    lightsAreOn = False
 
+lightsAreOn = True
 r = requests.get("http://192.168.1.124/api/joshuaserver/lights/3")
 parsed = json.loads(r.text)
-previousState = bool(parsed['state']['reachable'])
+previousCornerIsReachable = bool(parsed['state']['reachable'])
 
 while True:
-    r = requests.get("http://192.168.1.124/api/joshuaserver/lights/3")
-    parsed = json.loads(r.text)
-    currentState = bool(parsed['state']['reachable'])
+    cornerr = requests.get("http://192.168.1.124/api/joshuaserver/lights/3")
+    deskr = requests.get("http://192.168.1.124/api/joshuaserver/lights/2")
+    bedsider = requests.get("http://192.168.1.124/api/joshuaserver/lights/1")
+    cornerparsed = json.loads(cornerr.text)
+    deskparsed = json.loads(deskr.text)
+    bedsideparsed = json.loads(bedsider.text)
+    currentCornerIsReachable = bool(cornerparsed['state']['reachable'])
+    currentDeskIsOn = bool(deskparsed['state']['on'])
+    currentBedsideIsOn = bool(bedsideparsed['state']['on'])
     
-    print("\n")
-    print("Prev state: " + str(previousState))
-    print("Curr state: " + str(currentState))
-
-    if previousState == True and currentState == False:
+    if previousCornerIsReachable == True and currentCornerIsReachable == False:
         setLightsToOff()
-    elif previousState == False and currentState == True:
+    elif previousCornerIsReachable == False and currentCornerIsReachable == True:
+
         setLightsToNormalScene()
     else:
-        #time.sleep(5)
-        pass
-    previousState = currentState
+        if previousCornerIsReachable == True:
+            time.sleep(1)
+        else: 
+            time.sleep(.33)
+    previousCornerIsReachable = currentCornerIsReachable
 
 os.system("echo 'The process on the server that monitors the light in the bedroom that is powered by the lightswitch has ended.' | mail -s 'SERVER: apiCheckSwitch.py Ended' joshuapepperman@gmail.com")
