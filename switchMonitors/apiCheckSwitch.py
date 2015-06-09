@@ -17,6 +17,9 @@ def setLightsToOff():
     requests.put("http://192.168.1.124/api/joshuaserver/lights/3/state", data=json.dumps({"on":False}))
     lightsAreOn = False
 
+def isNightTime():
+    return time.localtime().tm_hour in [0, 1, 2, 3, 4, 5, 6, 11, 12]
+
 lightsAreOn = True
 r = requests.get("http://192.168.1.124/api/joshuaserver/lights/3")
 parsed = json.loads(r.text)
@@ -34,15 +37,16 @@ try:
         currentDeskIsOn = bool(deskparsed['state']['on'])
         currentBedsideIsOn = bool(bedsideparsed['state']['on'])
         
-        if previousCornerIsReachable == True and currentCornerIsReachable == False:
-            setLightsToOff()
-        elif previousCornerIsReachable == False and currentCornerIsReachable == True:
-            setLightsToNormalScene()
-        else:
-            if previousCornerIsReachable == True:
-                time.sleep(1)
-            else: 
-                time.sleep(.33)
+        if not isNightTime():
+            if previousCornerIsReachable == True and currentCornerIsReachable == False:
+                setLightsToOff()
+            elif previousCornerIsReachable == False and currentCornerIsReachable == True:
+                setLightsToNormalScene()
+            else:
+                if previousCornerIsReachable == True:
+                    time.sleep(1)
+                else: 
+                    time.sleep(.33)
         previousCornerIsReachable = currentCornerIsReachable
 except Exception as e:
     os.system("echo 'The process on the server that monitors the light in the bedroom that is powered by the lightswitch has ended. Error info: \n" + str(e) + "' | mail -s 'SERVER: apiCheckSwitch.py Ended' joshuapepperman@gmail.com")
